@@ -42,7 +42,9 @@ MostrarResultado(vagaE, meusSkills);
 
 int ContarAtendidos(List<Requisito> grupo, List<string> skills)
 {
-    return grupo.Count(r => skills.Contains(r.Nome, StringComparer.OrdinalIgnoreCase));
+    var skillsLimpas = skills.Select(s => s.Trim()).ToList();
+
+    return grupo.Count(r => skillsLimpas.Contains(r.Nome, StringComparer.OrdinalIgnoreCase));
 }
 
 double Proporcao(int atendidos, int total)
@@ -56,8 +58,13 @@ double Proporcao(int atendidos, int total)
 }
 double CalcularAderencia(Vaga vaga, List<string> skills)
 {
-    var obrigatorios = vaga.Requisitos.Where(r => r.Obrigatorio).ToList();
-    var desejaveis = vaga.Requisitos.Where(r => !r.Obrigatorio).ToList();
+  
+    var requisitosUnicos = vaga.Requisitos
+        .DistinctBy(r => r.Nome.Trim().ToLower())
+        .ToList();
+    
+    var obrigatorios = requisitosUnicos.Where(r => r.Obrigatorio).ToList();
+    var desejaveis = requisitosUnicos.Where(r => !r.Obrigatorio).ToList();
 
     double notaObrigatorios = Proporcao(ContarAtendidos(obrigatorios, skills), obrigatorios.Count);
     double notaDesejaveis = Proporcao(ContarAtendidos(desejaveis, skills), desejaveis.Count);
