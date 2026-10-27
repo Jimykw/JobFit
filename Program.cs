@@ -45,10 +45,22 @@ int ContarAtendidos(List<Requisito> grupo, List<string> skills)
     return grupo.Count(r => skills.Contains(r.Nome, StringComparer.OrdinalIgnoreCase));
 }
 
+double Proporcao(int atendidos, int total)
+{
+    if (total == 0)
+    {
+        return 0;
+    }
+
+    return (double)atendidos / total;
+}
 double CalcularAderencia(Vaga vaga, List<string> skills)
 {
     var obrigatorios = vaga.Requisitos.Where(r => r.Obrigatorio).ToList();
     var desejaveis = vaga.Requisitos.Where(r => !r.Obrigatorio).ToList();
+
+    double notaObrigatorios = Proporcao(ContarAtendidos(obrigatorios, skills), obrigatorios.Count);
+    double notaDesejaveis = Proporcao(ContarAtendidos(desejaveis, skills), desejaveis.Count);
 
     // Vaga sem nenhum requisito: não há o que avaliar
     if (obrigatorios.Count == 0 && desejaveis.Count == 0)
@@ -59,19 +71,14 @@ double CalcularAderencia(Vaga vaga, List<string> skills)
     // Vaga só com desejáveis: a nota é só a deles
     if (obrigatorios.Count == 0)
     {
-        double soDesejaveis = (double)ContarAtendidos(desejaveis, skills) / desejaveis.Count;
-        return soDesejaveis * 100;
+        return notaDesejaveis * 100;
     }
 
-    double notaObrigatorios = (double)ContarAtendidos(obrigatorios, skills) / obrigatorios.Count;
-
-    // Vaga só com obrigatórios: a nota é só a deles
+    // Só obrigatórios: a nota é só a deles
     if (desejaveis.Count == 0)
     {
         return notaObrigatorios * 100;
     }
-
-    double notaDesejaveis = (double)ContarAtendidos(desejaveis, skills) / desejaveis.Count;
 
     return (notaObrigatorios * 0.7 + notaDesejaveis * 0.3) * 100;
 }
