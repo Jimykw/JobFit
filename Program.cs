@@ -1,7 +1,10 @@
 ﻿using JobFit.Lab.Models;
 using JobFit.Lab.Services;
 
-var meusSkills = new List<string> { "C#", "SQL Server", "Git" };
+var perfil = new Perfil { Nome = "Jimy", AnosExperiencia = 0 };
+perfil.AdicionarSkill("C#");
+perfil.AdicionarSkill("SQL Server");
+perfil.AdicionarSkill("Git");
 
 var vagaA = new Vaga("Estágio Backend .NET", new List<Requisito>
 {
@@ -35,70 +38,22 @@ var vagaD = new Vaga("Só desejáveis", new List<Requisito>
 
 var vagaE = new Vaga("Sem requisitos", new List<Requisito>());
 
-MostrarResultado(vagaA, meusSkills);
-MostrarResultado(vagaB, meusSkills);
-MostrarResultado(vagaC, meusSkills);
-MostrarResultado(vagaD, meusSkills);
-MostrarResultado(vagaE, meusSkills);
+var vagas = new List<Vaga> { vagaA, vagaB, vagaC, vagaD, vagaE };
+var calculadora = new CalculadoraAderencia();
 
-// ---------- MÉTODOS ----------
-
-int ContarAtendidos(List<Requisito> grupo, List<string> skills)
+foreach (var vaga in vagas)
 {
-    var skillsLimpas = skills.Select(s => s.Trim()).ToList();
-
-    return grupo.Count(r => skillsLimpas.Contains(r.Nome, StringComparer.OrdinalIgnoreCase));
+    MostrarResultado(vaga, perfil, calculadora);
 }
 
-double Proporcao(int atendidos, int total)
+// ---------- MÉTODO ----------
+
+void MostrarResultado(Vaga vaga, Perfil perfil, CalculadoraAderencia calculadora)
 {
-    if (total == 0)
-    {
-        return 0;
-    }
-
-    return (double)atendidos / total;
-}
-double CalcularAderencia(Vaga vaga, List<string> skills)
-{
-  
-    var requisitosUnicos = vaga.Requisitos
-        .DistinctBy(r => r.Nome.Trim().ToLower())
-        .ToList();
-    
-    var obrigatorios = requisitosUnicos.Where(r => r.Obrigatorio).ToList();
-    var desejaveis = requisitosUnicos.Where(r => !r.Obrigatorio).ToList();
-
-    double notaObrigatorios = Proporcao(ContarAtendidos(obrigatorios, skills), obrigatorios.Count);
-    double notaDesejaveis = Proporcao(ContarAtendidos(desejaveis, skills), desejaveis.Count);
-
-    // Vaga sem nenhum requisito: não há o que avaliar
-    if (obrigatorios.Count == 0 && desejaveis.Count == 0)
-    {
-        return 0;
-    }
-
-    // Vaga só com desejáveis: a nota é só a deles
-    if (obrigatorios.Count == 0)
-    {
-        return notaDesejaveis * 100;
-    }
-
-    // Só obrigatórios: a nota é só a deles
-    if (desejaveis.Count == 0)
-    {
-        return notaObrigatorios * 100;
-    }
-
-    return (notaObrigatorios * 0.7 + notaDesejaveis * 0.3) * 100;
-}
-
-void MostrarResultado(Vaga vaga, List<string> skills)
-{
-    double aderencia = CalcularAderencia(vaga, skills);
+    double aderencia = calculadora.Calcular(vaga, perfil);
 
     var faltando = vaga.Requisitos
-        .Where(r => !skills.Contains(r.Nome, StringComparer.OrdinalIgnoreCase))
+        .Where(r => !perfil.Skills.Contains(r.Nome.Trim(), StringComparer.OrdinalIgnoreCase))
         .Select(r => r.Nome);
 
     Console.WriteLine($"=== {vaga.Titulo} ===");

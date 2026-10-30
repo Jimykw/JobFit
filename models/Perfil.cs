@@ -3,7 +3,7 @@ namespace JobFit.Lab.Models;
 public class Perfil
 {
     public string Nome { get; set; } = "";
-    public int AnosExperiacia { get; set; }
+    public int AnosExperiencia { get; set; }
     public List<string> Skills { get; set; } = new List<string>();
 
     public void AdicionarSkill(string skills)
