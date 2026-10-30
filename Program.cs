@@ -1,4 +1,7 @@
-﻿var meusSkills = new List<string> { "C#", "SQL Server", "Git" };
+﻿using JobFit.Lab.Models;
+using JobFit.Lab.Services;
+
+var meusSkills = new List<string> { "C#", "SQL Server", "Git" };
 
 var vagaA = new Vaga("Estágio Backend .NET", new List<Requisito>
 {
@@ -103,8 +106,3 @@ void MostrarResultado(Vaga vaga, List<string> skills)
     Console.WriteLine($"Faltando: {string.Join(", ", faltando)}");
     Console.WriteLine();
 }
-
-// ---------- TIPOS (sempre no final) ----------
-
-record Requisito(string Nome, bool Obrigatorio);
-record Vaga(string Titulo, List<Requisito> Requisitos);
