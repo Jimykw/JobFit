@@ -206,3 +206,10 @@ Bug perigoso é o que **não quebra, só mente** (`NaN`, nota inflada).
 - [ ] Explicar `namespace` e `using` sem olhar
 - [ ] Explicar `public` x `private` (encapsulamento)
 - [ ] Explicar o `CalculadoraAderencia` linha por linha em voz alta
+
+## Alguns comandos e o que fazem de terminal C#
+
+dotnet new sln cria a solution, um arquivo que agrupa vários projetos.
+dotnet sln add coloca um projeto dentro dela.
+dotnet new xunit cria o projeto de testes.
+dotnet add ... reference diz “o projeto de testes pode usar o código do JobFit.Lab”. Sem isso, os testes não enxergam a CalculadoraAderencia.

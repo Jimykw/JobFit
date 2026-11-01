@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="JobFit.Lab/JobFit.Lab.csproj" />
+  <Project Path="JobFit.Tests/JobFit.Tests.csproj" />
+</Solution>
